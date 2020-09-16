@@ -5,16 +5,19 @@ The paper "Heuristic Tubular Structure Discovery for Accurate Coronary Artery Se
     pip install torch
     pip install scikit-image
     pip install numpy 
+    pip install glob 
     pip install SimpleITK
     pip install numba
     pip install tdqm
 
 > Dataset
 > 
-CORONARY-18 dataset: https://baidu.com
+CORONARY-18 dataset: http://tmp.link/f/5f5a1199b2540
 
 Please download and save to RotterDamCoronaryDataset.
 Directory should like this:
+
+[1]: /imgs/tree.png 
 
 > Inference
 
@@ -40,4 +43,9 @@ Heuristic Coronary Segmentation by BFS:
     python ct2cr.py 
 Above command will generate coronary segmentation "CR.nii.gz" and print its Dice score.
 
+> Other
+
+If you want to clear all temporary files of above process(note: this commend will delete predicted segmentation "CR.nii.gz" as well)
+    
+    python clear_tmp_files 
 

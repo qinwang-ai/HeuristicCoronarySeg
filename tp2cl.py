@@ -4,8 +4,6 @@ import os
 import SimpleITK as sitk
 from skimage.morphology import skeletonize_3d
 import glob
-root = '/home/qinwang/miccai/'
-
 
 def mask2cl(mask_handler, file):
     start = time.time()
@@ -27,8 +25,7 @@ def mask2cl(mask_handler, file):
 
 
 if __name__ == '__main__':
-    file_list = glob.glob('./RotterdamCoronaryDataset/*/CT.nii.gz')
-    # file_list = ['/home/student/data/qinwang/ct_dataset/RotterLumen/dataset16/CTsp823.nii.gz']
+    file_list = list(map(lambda x:x.strip(), open("./valid.txt", 'r').readlines()))
 
     for index in range(len(file_list)):
         ct_path = file_list[index].replace('\n', '')

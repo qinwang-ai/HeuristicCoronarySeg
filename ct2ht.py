@@ -1,6 +1,3 @@
-"""
-训练脚本
-"""
 
 import os
 from time import time
@@ -8,10 +5,10 @@ import numpy as np
 import SimpleITK as sitk
 
 import torch
-from net.ResUnet import net
+from net.HeartSegUNet import net
 import utils
 
-batch_size = 4
+batch_size = 1
 edge = (8, 160, 160)
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
@@ -43,23 +40,17 @@ def update_ans(positions, preds, ans):
         ind += 1
     return ans
 
-def test(net):
+def test_ht(net):
     import glob
-    file_list = glob.glob('./RotterdamCoronaryDataset/*/CT.nii.gz')
+    file_list = list(map(lambda x:x.strip(), open("./valid.txt", 'r').readlines()))
     net.eval()
-    # 训练网络
-    start1 = time()
-    dice_arr = []
+    print('num of files', len(file_list))
     for index in range(len(file_list)):
         start = time()
         ct_path = file_list[index].replace('\n', '')
         fr_path = ct_path.replace('CT', 'FR')
         save_path = ct_path.replace('CT', 'HT')
-        if os.path.exists(save_path):
-            print(save_path, 'already exists skip...')
-            continue
 
-        # 将CT和金标准读入到内存中
         ct = sitk.ReadImage(ct_path)
         fr = sitk.ReadImage(fr_path)
         ct_array = sitk.GetArrayFromImage(ct)
@@ -130,5 +121,5 @@ if __name__ == '__main__':
     pretrained_model_path = "./module/best_ct2ht.pth"
     net = torch.nn.DataParallel(net).cuda()
     net.load_state_dict(torch.load(pretrained_model_path), strict=False)
-    test(net)
+    test_ht(net)
 

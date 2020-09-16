@@ -1,5 +1,4 @@
 """
-训练脚本
 """
 
 import os
@@ -7,12 +6,11 @@ from time import time
 import numpy as np
 import utils
 import SimpleITK as sitk
-# from config import root
 import glob
 import torch
 edge = 16
 
-from net.ResUnet import net
+from net.Model import net
 from skimage.morphology import skeletonize_3d
 
 
@@ -115,6 +113,7 @@ def save_nii(hander, pred_array, ct_path):
 
 def main(net, file_list):
     start1 = time()
+    dice_list = []
     for index in range(len(file_list)):
         start = time()
         ct_path = file_list[index].replace('\n', '')
@@ -122,37 +121,40 @@ def main(net, file_list):
         fr_path = ct_path.replace('CT', 'FR')
         tp_path = ct_path.replace('CT', 'TP')
         ht_path = ct_path.replace('CT', 'HT')
+        gt_path = ct_path.replace('CT', 'GT')
         save_path = ct_path.replace('CT', 'CR')
         # if os.path.exists(save_path):
         #     print('existed skip...')
         #     continue
 
-        # 将CT和金标准读入到内存中
         ct = sitk.ReadImage(ct_path)
         fr = sitk.ReadImage(fr_path)
         tp = sitk.ReadImage(tp_path)
         ht = sitk.ReadImage(ht_path)
+        gt = sitk.ReadImage(gt_path)
         ct_array = sitk.GetArrayFromImage(ct)
         fr_array = sitk.GetArrayFromImage(fr)
         tp_array = sitk.GetArrayFromImage(tp)
         ht_array = sitk.GetArrayFromImage(ht)
+        gt_array = sitk.GetArrayFromImage(gt)
 
         pred_array = do_segment(ct_array, fr_array, tp_array, net, ht_array)
-        pred_array = utils.get_coronary_LC(pred_array)
+        pred_array = utils.get_coronary_LC(pred_array.astype(np.int8))
 
+        dice = 2 * (gt_array * pred_array).sum() / (gt_array.sum() + pred_array.sum())
 
         # for visualization
         save_nii(ct, pred_array, ct_path)
 
-        print('time:{:.3f} min'.format((time() - start) / 60), ct_path)
+        print('time:{:.3f} min'.format((time() - start) / 60), ct_path, 'dice: %0.3f' % dice)
+        dice_list.append(dice)
 
-    print('test consuming time:', time() - start1)
-
+    print('test consuming time:', time() - start1, 'overall dice: %0.3f' % np.array(dice_list).mean())
 
 if __name__ == '__main__':
     pretrained_model_path = './module/best_ct2mask.pth'
-    file_list = glob.glob('./RotterdamCoronaryDataset/*/CT.nii.gz')
-    net = torch.nn.DataParallel(net).cuda()
+    file_list = list(map(lambda x:x.strip(), open("./valid.txt", 'r').readlines()))
     net.load_state_dict(torch.load(pretrained_model_path), strict=False)
+    net = net.cuda()
+    net.eval()
     main(net, file_list)
-

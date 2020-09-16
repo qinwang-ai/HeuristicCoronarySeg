@@ -8,11 +8,12 @@ from net.ResUnetTP import net
 
 edge = (8 // 2, 320 // 2, 320 // 2)
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
-batch_size = 1
-Max_ratio = 0.65
+batch_size = 2
+# Max_ratio = 0.65
+Max_ratio = 0.5
 pretrained_model_path = "./module/best_ct2tp.pth"
 
-file_list = glob.glob('./RotterdamCoronaryDataset/*/CT.nii.gz')
+file_list = list(map(lambda x: x.strip(), open("./valid.txt", 'r').readlines()))
 
 
 def eval(patches):
@@ -55,7 +56,6 @@ if __name__ == '__main__':
     net.load_state_dict(torch.load(pretrained_model_path), strict=False)
     net.eval()
 
-    # 训练网络
     start1 = time()
 
     for index in range(len(file_list)):
@@ -64,11 +64,7 @@ if __name__ == '__main__':
 
         fr_path = ct_path.replace('CT', 'FR')
         save_path = ct_path.replace('CT', 'TP')
-        if os.path.exists(save_path):
-            print(save_path, 'existed skipped')
-            continue
 
-        # 将CT和金标准读入到内存中
         ct = sitk.ReadImage(ct_path)
         fr = sitk.ReadImage(fr_path)
         ct_array = sitk.GetArrayFromImage(ct)

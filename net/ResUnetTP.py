@@ -7,7 +7,6 @@ dropout_rate = 0.5
 Max_ratio = 0.2
 
 
-# 定义单个3D FCN
 class ResUNet(nn.Module):
 
     def __init__(self, training, inchannel):
@@ -169,7 +168,6 @@ class ResUNet(nn.Module):
         return result
 
 
-# 网络参数初始化函数
 def init(module):
     if isinstance(module, nn.Conv3d) or isinstance(module, nn.ConvTranspose3d):
         nn.init.kaiming_normal(module.weight.data, 0.25)

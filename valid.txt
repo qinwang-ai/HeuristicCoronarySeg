@@ -1,0 +1,4 @@
+./data/06/CT.nii.gz
+./data/00/CT.nii.gz
+./data/07/CT.nii.gz
+./data/13/CT.nii.gz

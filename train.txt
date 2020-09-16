@@ -1,0 +1,14 @@
+./data/08/CT.nii.gz
+./data/05/CT.nii.gz
+./data/09/CT.nii.gz
+./data/14/CT.nii.gz
+./data/12/CT.nii.gz
+./data/04/CT.nii.gz
+./data/15/CT.nii.gz
+./data/17/CT.nii.gz
+./data/01/CT.nii.gz
+./data/16/CT.nii.gz
+./data/11/CT.nii.gz
+./data/10/CT.nii.gz
+./data/02/CT.nii.gz
+./data/03/CT.nii.gz

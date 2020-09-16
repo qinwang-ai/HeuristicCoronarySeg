@@ -4,7 +4,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-# 定义单个3D FCN
 class Model(nn.Module):
     def __init__(self, training):
         super().__init__()
