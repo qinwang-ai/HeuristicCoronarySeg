@@ -14,8 +14,26 @@ The paper "Heuristic Tubular Structure Discovery for Accurate Coronary Artery Se
 > 
 CORONARY-18 dataset: http://tmp.link/f/5f5a1199b2540
 
-Please download and save to RotterDamCoronaryDataset.
-Directory should like this:
+Please download it and move it to 'data' folder.
+'data' Directory should be like this:
+
+    - data
+
+        - 00
+            - CT.nii.gz
+            - GT.nii.gz
+            - FR.nii.gz
+        - 01
+            - CT.nii.gz
+            - GT.nii.gz
+            - FR.nii.gz
+         ....
+
+> Pretrained Weights
+>
+Our pretrained weights file: http://tmp.link/f/5f61ef569848e
+
+Please download it and move all '*.pth' into 'module' folder.
 
 [1]: /imgs/tree.png 
 
@@ -27,7 +45,7 @@ Generate initial tracking points using CGL module:
     
 Above command will generate "TP.nii.gz" and save in same directory as CT files.
 
-Generate the initial centerline of CGL's initial segmentation:
+Generate the initial centerline of CGL's initial segmentation from tracking points:
     
     python tp2cl.py
     
@@ -38,14 +56,15 @@ Generate heart segmentation:
     python ct2ht.py
 Above command will generate "HT.nii.gz" and save in same directory as CT files.
 
-Heuristic Coronary Segmentation by BFS:
+Heuristic Coronary Segmentation by Breadth-first Search:
 
     python ct2cr.py 
-Above command will generate coronary segmentation "CR.nii.gz" and print its Dice score.
+Above command will generate coronary segmentation "CR.nii.gz" for each CCTA in 'valid.txt' and print its Dice score. 
+After all segmentation have been generated, the overall dice score will be calculated.
 
 > Other
 
-If you want to clear all temporary files of above process(note: this commend will delete predicted segmentation "CR.nii.gz" as well)
+If you want to clear all temporary files of above process(note: this commend will delete predicted segmentation "CR.nii.gz" as well).
     
     python clear_tmp_files 
 
